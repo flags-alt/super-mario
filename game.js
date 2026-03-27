@@ -6,28 +6,25 @@ kaboom({
   clearColor: [0, 0, 0, 1],
 })
 
-// Proviamo a caricare solo Mario e il blocco base
-loadRoot('/assets/')
-
-// IMPORTANTE: Controlla se i file si chiamano davvero così (tutto minuscolo)
-loadSprite('mario', 'mario.png')
-loadSprite('block', 'block.png')
+// Proviamo a caricare i file direttamente dalla cartella assets
+loadSprite('mario', '/assets/mario.png')
+loadSprite('block', '/assets/block.png')
 
 scene("game", () => {
   add([
-    text("Se vedi questo, il codice gira!"),
+    text("SISTEMA ATTIVO!"),
     pos(10, 10),
   ])
 
   add([
     sprite('mario'),
-    pos(80, 80),
+    pos(100, 100),
     body(),
   ])
 
   add([
     sprite('block'),
-    pos(80, 120),
+    pos(100, 150),
     solid(),
   ])
 })
