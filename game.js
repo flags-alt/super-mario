@@ -1,5 +1,5 @@
-//IMPORTANT: Make sure to use Kaboom version 0.5.0 for this game by adding the correct script tag in the HTML file.
 
+// Configurazione Kaboom 0.5.0 ottimizzata per Discord
 kaboom({
   global: true,
   fullscreen: true,
@@ -8,7 +8,7 @@ kaboom({
   clearColor: [0, 0, 0, 1],
 })
 
-// Speed identifiers
+// Identificatori di velocità
 const MOVE_SPEED = 120
 const JUMP_FORCE = 360
 const BIG_JUMP_FORCE = 550
@@ -16,11 +16,12 @@ let CURRENT_JUMP_FORCE = JUMP_FORCE
 const FALL_DEATH = 400
 const ENEMY_SPEED = 20
 
-// Game logic
-
+// Logica di salto
 let isJumping = true
 
-loadRoot('assets/')
+// CARICAMENTO ASSETS - La barra / iniziale è fondamentale per Discord!
+loadRoot('/assets/')
+
 loadSprite('coin', 'coin.png')
 loadSprite('evil-shroom', 'evil-shroom.png')
 loadSprite('brick', 'brick.png')
@@ -33,15 +34,13 @@ loadSprite('pipe-top-left', 'pipe-top-left.png')
 loadSprite('pipe-top-right', 'pipe-top-right.png')
 loadSprite('pipe-bottom-left', 'pipe-bottom-left.png')
 loadSprite('pipe-bottom-right', 'pipe-bottom-right.png')
-
 loadSprite('blue-block', 'blue-block.png')
 loadSprite('blue-brick', 'blue-brick.png')
 loadSprite('blue-steel', 'blue-steel.png')
 loadSprite('blue-evil-shroom', 'blue-evil-shroom.png')
 loadSprite('blue-surprise', 'blue-surprise.png')
 
-
-
+// Scena del gioco
 scene("game", ({ level, score }) => {
   layers(['bg', 'obj', 'ui'], 'obj')
 
@@ -52,11 +51,11 @@ scene("game", ({ level, score }) => {
       '                                      ',
       '                                      ',
       '                                      ',
-      '     %   =*=%=                        ',
+      '      %   =*=%=                       ',
       '                                      ',
-      '                            -+        ',
-      '                    ^   ^   ()        ',
-      '==============================   =====',
+      '                             -+       ',
+      '                    ^   ^    ()       ',
+      '==============================    ====',
     ],
     [
       '£                                       £',
@@ -64,10 +63,10 @@ scene("game", ({ level, score }) => {
       '£                                       £',
       '£                                       £',
       '£                                       £',
-      '£        @@@@@@              x x        £',
-      '£                          x x x        £',
-      '£                        x x x x  x   -+£',
-      '£               z   z  x x x x x  x   ()£',
+      '£        @@@@@@             x x         £',
+      '£                           x x x       £',
+      '£                         x x x x  x  -+£',
+      '£                z   z  x x x x x  x  ()£',
       '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
     ]
   ]
@@ -91,21 +90,18 @@ scene("game", ({ level, score }) => {
     'z': [sprite('blue-evil-shroom'), solid(), scale(0.5), 'dangerous'],
     '@': [sprite('blue-surprise'), solid(), scale(0.5), 'coin-surprise'],
     'x': [sprite('blue-steel'), solid(), scale(0.5)],
-
   }
 
   const gameLevel = addLevel(maps[level], levelCfg)
 
   const scoreLabel = add([
-    text(score),
+    text(score.toString()), // Convertito in stringa per sicurezza
     pos(30, 6),
     layer('ui'),
-    {
-      value: score,
-    }
+    { value: score }
   ])
 
-  add([text('level ' + parseInt(level + 1) ), pos(40, 6)])
+  add([text('level ' + (level + 1)), pos(60, 6), layer('ui')])
   
   function big() {
     let timer = 0
@@ -120,9 +116,7 @@ scene("game", ({ level, score }) => {
           }
         }
       },
-      isBig() {
-        return isBig
-      },
+      isBig() { return isBig },
       smallify() {
         this.scale = vec2(1)
         CURRENT_JUMP_FORCE = JUMP_FORCE
@@ -138,16 +132,15 @@ scene("game", ({ level, score }) => {
   }
 
   const player = add([
-    sprite('mario'), solid(),
+    sprite('mario'), 
+    solid(),
     pos(30, 0),
     body(),
     big(),
     origin('bot')
   ])
 
-  action('mushroom', (m) => {
-    m.move(20, 0)
-  })
+  action('mushroom', (m) => { m.move(20, 0) })
 
   player.on("headbump", (obj) => {
     if (obj.is('coin-surprise')) {
@@ -170,25 +163,23 @@ scene("game", ({ level, score }) => {
   player.collides('coin', (c) => {
     destroy(c)
     scoreLabel.value++
-    scoreLabel.text = scoreLabel.value
+    scoreLabel.text = scoreLabel.value.toString()
   })
 
-  action('dangerous', (d) => {
-    d.move(-ENEMY_SPEED, 0)
-  })
+  action('dangerous', (d) => { d.move(-ENEMY_SPEED, 0) })
 
   player.collides('dangerous', (d) => {
     if (isJumping) {
       destroy(d)
     } else {
-      go('lose', { score: scoreLabel.value})
+      go('lose', { score: scoreLabel.value })
     }
   })
 
   player.action(() => {
     camPos(player.pos)
     if (player.pos.y >= FALL_DEATH) {
-      go('lose', { score: scoreLabel.value})
+      go('lose', { score: scoreLabel.value })
     }
   })
 
@@ -201,18 +192,11 @@ scene("game", ({ level, score }) => {
     })
   })
 
-  keyDown('left', () => {
-    player.move(-MOVE_SPEED, 0)
-  })
-
-  keyDown('right', () => {
-    player.move(MOVE_SPEED, 0)
-  })
+  keyDown('left', () => { player.move(-MOVE_SPEED, 0) })
+  keyDown('right', () => { player.move(MOVE_SPEED, 0) })
 
   player.action(() => {
-    if(player.grounded()) {
-      isJumping = false
-    }
+    if(player.grounded()) { isJumping = false }
   })
 
   keyPress('space', () => {
@@ -225,15 +209,15 @@ scene("game", ({ level, score }) => {
 
 scene('lose', ({ score }) => {
   add([
-    text(score, 32),
+    text("Score: " + score, 32),
     origin('center'),
     pos(width() / 2, height() / 2)
   ])
 
   add([
-    text('Premi SPAZIO per riavviare', 16),
+    text('SPAZIO per riavviare', 16),
     origin('center'),
-    pos(width() / 2, height() / 2 + 40)
+    pos(width() / 2, height() / 2 + 60)
   ])
 
   keyPress('space', () => {
@@ -241,4 +225,4 @@ scene('lose', ({ score }) => {
   })
 })
 
-start("game", { level: 0, score: 0})
+start("game", { level: 0, score: 0 })
