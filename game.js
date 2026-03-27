@@ -6,118 +6,30 @@ kaboom({
   clearColor: [0, 0, 0, 1],
 })
 
-const MOVE_SPEED = 120
-const JUMP_FORCE = 360
-const BIG_JUMP_FORCE = 550
-let CURRENT_JUMP_FORCE = JUMP_FORCE
-const FALL_DEATH = 400
-const ENEMY_SPEED = 20
-let isJumping = true
-
-// CARICAMENTO ASSETS - Ho messo gli SPAZI come nei tuoi file!
+// Proviamo a caricare solo Mario e il blocco base
 loadRoot('/assets/')
 
-loadSprite('coin', 'coin.png')
-loadSprite('evil-shroom', 'evil shroom.png') // <--- Qui c'è lo spazio ora
-loadSprite('brick', 'brick.png')
-loadSprite('block', 'block.png')
+// IMPORTANTE: Controlla se i file si chiamano davvero così (tutto minuscolo)
 loadSprite('mario', 'mario.png')
-loadSprite('mushroom', 'mushroom.png')
-loadSprite('surprise', 'surprise.png')
-loadSprite('unboxed', 'unboxed.png')
-loadSprite('pipe-top-left', 'pipe-top-left.png')
-loadSprite('pipe-top-right', 'pipe-top-right.png')
-loadSprite('pipe-bottom-left', 'pipe-bottom-left.png')
-loadSprite('pipe-bottom-right', 'pipe-bottom-right.png')
-loadSprite('blue-block', 'blue-block.png')
-loadSprite('blue-brick', 'blue-brick.png')
-loadSprite('blue-steel', 'blue-steel.png')
-loadSprite('blue-evil-shroom', 'blue evil shroom.png') // <--- Anche qui spazio
-loadSprite('blue-surprise', 'blue-surprise.png')
+loadSprite('block', 'block.png')
 
-// Il resto del gioco rimane uguale perché usiamo i "nomi brevi" (es. 'blue-evil-shroom')
-scene("game", ({ level, score }) => {
-  layers(['bg', 'obj', 'ui'], 'obj')
-
-  const maps = [
-    [
-      '                                      ',
-      '      %   =*=%=                       ',
-      '                             -+       ',
-      '                    ^   ^    ()       ',
-      '==============================    ====',
-    ],
-    [
-      '£                                       £',
-      '£        @@@@@@             x x         £',
-      '£                         x x x x  x  -+£',
-      '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
-    ]
-  ]
-
-  const levelCfg = {
-    width: 20,
-    height: 20,
-    '=': [sprite('block'), solid()],
-    '$': [sprite('coin'), 'coin'],
-    '%': [sprite('surprise'), solid(), 'coin-surprise'],
-    '*': [sprite('surprise'), solid(), 'mushroom-surprise'],
-    '}': [sprite('unboxed'), solid()],
-    '(': [sprite('pipe-bottom-left'), solid(), scale(0.5)],
-    ')': [sprite('pipe-bottom-right'), solid(), scale(0.5)],
-    '-': [sprite('pipe-top-left'), solid(), scale(0.5), 'pipe'],
-    '+': [sprite('pipe-top-right'), solid(), scale(0.5), 'pipe'],
-    '^': [sprite('evil-shroom'), solid(), 'dangerous'],
-    '#': [sprite('mushroom'), solid(), 'mushroom', body()],
-    '!': [sprite('blue-block'), solid(), scale(0.5)],
-    '£': [sprite('blue-brick'), solid(), scale(0.5)],
-    'z': [sprite('blue-evil-shroom'), solid(), scale(0.5), 'dangerous'],
-    '@': [sprite('blue-surprise'), solid(), scale(0.5), 'coin-surprise'],
-    'x': [sprite('blue-steel'), solid(), scale(0.5)],
-  }
-
-  const gameLevel = addLevel(maps[level], levelCfg)
-
-  const scoreLabel = add([
-    text(score.toString()),
-    pos(30, 6),
-    layer('ui'),
-    { value: score }
+scene("game", () => {
+  add([
+    text("Se vedi questo, il codice gira!"),
+    pos(10, 10),
   ])
 
-  const player = add([
-    sprite('mario'), solid(),
-    pos(30, 0),
+  add([
+    sprite('mario'),
+    pos(80, 80),
     body(),
-    origin('bot')
   ])
 
-  action('dangerous', (d) => { d.move(-ENEMY_SPEED, 0) })
-
-  player.collides('dangerous', (d) => {
-    if (isJumping) { destroy(d) } 
-    else { go('lose', { score: scoreLabel.value }) }
-  })
-
-  player.action(() => {
-    camPos(player.pos)
-    if (player.pos.y >= FALL_DEATH) { go('lose', { score: scoreLabel.value }) }
-  })
-
-  keyDown('left', () => { player.move(-MOVE_SPEED, 0) })
-  keyDown('right', () => { player.move(MOVE_SPEED, 0) })
-
-  keyPress('space', () => {
-    if (player.grounded()) {
-      isJumping = true
-      player.jump(CURRENT_JUMP_FORCE)
-    }
-  })
+  add([
+    sprite('block'),
+    pos(80, 120),
+    solid(),
+  ])
 })
 
-scene('lose', ({ score }) => {
-  add([text("Score: " + score, 32), origin('center'), pos(width() / 2, height() / 2)])
-  keyPress('space', () => { go('game', { level: 0, score: 0 }) })
-})
-
-start("game", { level: 0, score: 0 })
+start("game")
