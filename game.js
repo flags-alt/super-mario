@@ -6,9 +6,9 @@ kaboom({
   clearColor: [0, 0, 0, 1],
 })
 
-// Proviamo a caricare i file direttamente dalla cartella assets
-loadSprite('mario', '/assets/mario.png')
-loadSprite('block', '/assets/block.png')
+// Abbiamo tolto la / prima di assets!
+loadSprite('mario', 'assets/mario.png')
+loadSprite('block', 'assets/block.png')
 
 scene("game", () => {
   add([
